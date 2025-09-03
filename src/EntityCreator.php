@@ -1,0 +1,57 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Medas\TestDataCreator;
+
+use Medas\Core\Attributes\Service;
+
+#[Service]
+readonly class EntityCreator
+{
+    public function __construct(
+        private ValueProcessor $valueProcessor,
+    )
+    {
+    }
+
+    public function create(Job $job, Definitions\Action $action, array $context = []): void
+    {
+        $definition = clone $job->data->definitions[$action->definition];
+
+        if ($action->properties) {
+            $definition->properties = array_merge($definition->properties, $action->properties);
+        }
+
+        $count = $this->valueProcessor->process($action->count, $context);
+
+        if ($job->printProgress) {
+            echo "Creating $count $definition->entity entities…\n";
+        }
+
+        for ($i = 0; $i < $count; $i++) {
+            $this->createEntity($job, $definition, $context);
+        }
+
+        if ($job->printProgress) {
+            echo "   Creating $count $definition->entity entities: done\n";
+        }
+    }
+
+    private function createEntity(Job $job, Definitions\Definition $definition, array $context): void
+    {
+        $properties = [];
+
+        foreach ($definition->properties as $name => $value) {
+            $properties[$name] = $context[$name] = $this->valueProcessor->process($value, $context);
+        }
+
+        $entity = em()->create($definition->entity, $properties);
+
+        if ($definition->children) {
+            foreach ($definition->children as $child) {
+                $this->create($job, $child, ['parent' => $entity]);
+            }
+        }
+    }
+}

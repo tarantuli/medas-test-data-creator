@@ -1,8 +1,8 @@
 {
-    "name": "morphp/medas-placeholder",
-    "description": "Medas placeholder",
+    "name": "morphp/medas-test-data-creator",
+    "description": "Medas test data creator",
     "keywords": [
-        "placeholder"
+        "backend"
     ],
     "authors": [
         {
@@ -14,7 +14,10 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "morphp/medas-core": "dev-dev"
+        "morphp/medas-core": "dev-dev",
+        "morphp/medas-entity-manager": "dev-dev",
+        "fakerphp/faker": "^1.24",
+        "symfony/yaml": "^7.3"
     },
     "require-dev": {
         "morphp/medas-service-manager": "dev-dev",
@@ -22,8 +25,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Medas\\Placeholder\\": "src/",
-            "Medas\\PlaceholderTest\\": "tests/"
+            "Medas\\TestDataCreator\\": "src/",
+            "Medas\\TestDataCreatorTest\\": "tests/"
         }
     }
 }

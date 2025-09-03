@@ -2,18 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Medas\Placeholder;
+namespace Medas\TestDataCreator;
 
 use Medas\Core\AsSingleton;
+use Medas\EntityManager\EntityManagerPackage;
 use Medas\ServiceManager\BasePackage;
 
-class PlaceholderPackage extends BasePackage
+class TestDataCreatorPackage extends BasePackage
 {
     use AsSingleton;
 
     public function dependencies(): array
     {
-        return [];
+        return [
+            EntityManagerPackage::instance(),
+        ];
     }
 
     public function sourceDirectory(): string
