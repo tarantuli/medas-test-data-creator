@@ -38,7 +38,7 @@ readonly class EntityCreator
         }
     }
 
-    private function createEntity(Job $job, Definitions\Definition $definition, array $context): void
+    public function createEntity(Job $job, Definitions\Definition $definition, array $context): object
     {
         $properties = [];
 
@@ -53,5 +53,7 @@ readonly class EntityCreator
                 $this->create($job, $child, ['parent' => $entity]);
             }
         }
+
+        return $entity;
     }
 }

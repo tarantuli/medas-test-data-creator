@@ -7,7 +7,7 @@ namespace Medas\TestDataCreator\Functions;
 use Faker\Factory;
 use Faker\Generator;
 use Medas\Core\Attributes\Service;
-use Medas\TestDataCreator\{Exceptions, ValueProcessor};
+use Medas\TestDataCreator\{Exceptions, Job, ValueProcessor};
 
 #[Service]
 class Processor
@@ -18,6 +18,7 @@ class Processor
     public function __construct(
         private readonly Processors\Between         $betweenProcessor,
         private readonly Processors\Chance          $chanceProcessor,
+        private readonly Processors\Create          $createProcessor,
         private readonly Processors\Filter          $filterProcessor,
         private readonly Processors\FutureDate      $futureDateProcessor,
         private readonly Processors\IfProcessor     $ifProcessor,
@@ -28,6 +29,7 @@ class Processor
     }
 
     public function applyFunction(
+        Job            $job,
         string         $function,
         array          $parameters,
         array          $context,
@@ -42,6 +44,7 @@ class Processor
         return match ($function) {
             'between' => $this->betweenProcessor->process($parameters),
             'chance' => $this->chanceProcessor->process($parameters),
+            'create' => $this->createProcessor->process($job, $parameters),
             'email' => $this->faker->email(),
             'filter' => $this->filterProcessor->process($parameters),
             'futureDate' => $this->futureDateProcessor->process(),

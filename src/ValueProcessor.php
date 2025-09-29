@@ -19,7 +19,7 @@ readonly class ValueProcessor
     {
     }
 
-    public function process(mixed $value, array $context = []): mixed
+    public function process(Job $job, mixed $value, array $context = []): mixed
     {
         if (!is_string($value)) {
             return $value;
@@ -43,10 +43,11 @@ readonly class ValueProcessor
 
         if ($function = $this->functionParser->parse($value)) {
             return $this->functionProcessor->applyFunction(
+                $job,
                 $function->name,
                 $function->parameters,
                 $context,
-                $this
+                $this,
             );
         }
 
