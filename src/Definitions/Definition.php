@@ -9,7 +9,7 @@ class Definition
     public string $entity;
 
     /** @var mixed[] */
-    public array $properties;
+    public array $properties = [];
 
     /** @var Action[] */
     public array $children = [];

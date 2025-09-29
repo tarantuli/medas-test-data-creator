@@ -23,7 +23,7 @@ readonly class EntityCreator
             $definition->properties = array_merge($definition->properties, $action->properties);
         }
 
-        $count = $this->valueProcessor->process($action->count, $context);
+        $count = $this->valueProcessor->process($job, $action->count, $context);
 
         if ($job->printProgress) {
             echo "Creating $count $definition->entity entities…\n";
@@ -43,7 +43,11 @@ readonly class EntityCreator
         $properties = [];
 
         foreach ($definition->properties as $name => $value) {
-            $properties[$name] = $context[$name] = $this->valueProcessor->process($value, $context);
+            $properties[$name] = $context[$name] = $this->valueProcessor->process(
+                $job,
+                $value,
+                $context
+            );
         }
 
         $entity = em()->create($definition->entity, $properties);

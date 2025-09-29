@@ -38,7 +38,7 @@ class Processor
     {
         array_walk(
             $parameters,
-            fn(&$parameter) => $parameter = $valueProcessor->process($parameter, $context)
+            fn(&$parameter) => $parameter = $valueProcessor->process($job, $parameter, $context)
         );
 
         return match ($function) {
@@ -50,14 +50,14 @@ class Processor
             'futureDate' => $this->futureDateProcessor->process(),
             'if' => $this->ifProcessor->process($parameters),
             'name' => $this->faker->name(),
-            'not' => !$valueProcessor->process($parameters[0], $context),
+            'not' => !$valueProcessor->process($job, $parameters[0], $context),
             'parent' => $context['parent'] ?? null,
             'password' => $this->faker->password(),
             'passwordHash' => password_hash($parameters[0], PASSWORD_DEFAULT),
             'random' => $this->faker->randomElement($parameters[0]),
             'switch' => $this->switchProcessor->process($parameters),
             'text' => '<p>' . implode('</p><p>', $this->faker->paragraphs(mt_rand(1, 5))) . '</p>',
-            'title' => $this->faker->sentence(),
+            'title' => rtrim($this->faker->sentence(), '. '),
             'uniqueInt' => $this->uniqueInt++,
             default => throw new Exceptions\UnknownFunctionName($function),
         };
