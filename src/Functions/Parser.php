@@ -9,9 +9,9 @@ use Medas\Core\Attributes\Service;
 #[Service]
 readonly class Parser
 {
-    private const READING_FUNCTION_NAME = 0;
-    private const READING_FUNCTION_PARAMETERS = 1;
-    private const DONE_READING_FUNCTION = 2;
+    private const int READING_FUNCTION_NAME = 0;
+    private const int READING_FUNCTION_PARAMETERS = 1;
+    private const int DONE_READING_FUNCTION = 2;
 
     public function parse(string $value): Call|null
     {
