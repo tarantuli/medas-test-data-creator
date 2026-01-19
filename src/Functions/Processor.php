@@ -54,11 +54,13 @@ class Processor
             'parent' => $context['parent'] ?? null,
             'password' => $this->faker->password(),
             'passwordHash' => password_hash($parameters[0], PASSWORD_DEFAULT),
+            'question' => rtrim($this->faker->sentence(), '. ') . '?',
             'random' => $this->faker->randomElement($parameters[0]),
             'switch' => $this->switchProcessor->process($parameters),
             'text' => '<p>' . implode('</p><p>', $this->faker->paragraphs(mt_rand(1, 5))) . '</p>',
             'title' => rtrim($this->faker->sentence(), '. '),
             'uniqueInt' => $this->uniqueInt++,
+            'word' => rtrim($this->faker->word(), '. '),
             default => throw new Exceptions\UnknownFunctionName($function),
         };
     }
