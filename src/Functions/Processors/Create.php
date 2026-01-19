@@ -16,4 +16,17 @@ readonly class Create
 
         return \service(EntityCreator::class)->createEntity($job, $definition, []);
     }
+
+    public function processArray(Job $job, array $parameters): array
+    {
+        $array = [];
+        $definition = clone $job->data->definitions[$parameters[0]];
+        $count = $parameters[1];
+
+        for ($i = 0; $i < $count; $i++) {
+            $array[] = \service(EntityCreator::class)->createEntity($job, $definition, []);
+        }
+
+        return $array;
+    }
 }

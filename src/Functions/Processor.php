@@ -45,6 +45,7 @@ class Processor
             'between' => $this->betweenProcessor->process($parameters),
             'chance' => $this->chanceProcessor->process($parameters),
             'create' => $this->createProcessor->process($job, $parameters),
+            'createArray' => $this->createProcessor->processArray($job, $parameters),
             'email' => $this->faker->email(),
             'filter' => $this->filterProcessor->process($parameters),
             'futureDate' => $this->futureDateProcessor->process(),
