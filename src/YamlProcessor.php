@@ -23,13 +23,7 @@ readonly class YamlProcessor
     {
         em()->autoPersistOnCreate(alsoFlush: false);
 
-        $job = new Job($directory);
-        $content = $this->getContent($job);
-
-        $job->data = $this->arrayToObjectCaster->cast(
-            Yaml::parse($content),
-            Definitions\Data::class
-        );
+        $job = $this->createJob($directory);
 
         $this->processActions($job);
 
@@ -44,17 +38,30 @@ readonly class YamlProcessor
         }
     }
 
-    private function getContent(Job $job): string
-    {
-        $file = $job->directory . DIRECTORY_SEPARATOR . 'index.yaml';
-
-        return $this->importProcessor->process($job, file_get_contents($file));
-    }
-
     private function processActions(Job $job): void
     {
         foreach ($job->data->actions as $action) {
             $this->actionProcessor->process($job, $action);
         }
+    }
+
+    public function createJob(string $directory): Job
+    {
+        $job = new Job($directory);
+        $content = $this->getContent($job);
+
+        $job->data = $this->arrayToObjectCaster->cast(
+            Yaml::parse($content),
+            Definitions\Data::class
+        );
+
+        return $job;
+    }
+
+    private function getContent(Job $job): string
+    {
+        $file = $job->directory . DIRECTORY_SEPARATOR . 'index.yaml';
+
+        return $this->importProcessor->process($job, file_get_contents($file));
     }
 }
