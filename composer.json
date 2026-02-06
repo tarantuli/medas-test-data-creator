@@ -1,32 +1,31 @@
 {
-    "name": "morphp/medas-test-data-creator",
-    "description": "Medas test data creator",
-    "keywords": [
-        "backend"
-    ],
-    "authors": [
-        {
-            "name": "Patrick Morpey",
-            "email": "patrick@morphp.nl"
-        }
-    ],
-    "type": "library",
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "require": {
-        "morphp/medas-core": "dev-dev",
-        "morphp/medas-entity-manager": "dev-dev",
-        "fakerphp/faker": "^1.24",
-        "symfony/yaml": "^7.3"
-    },
-    "require-dev": {
-        "morphp/medas-service-manager": "dev-dev",
-        "phpunit/phpunit": "^9.5"
-    },
-    "autoload": {
-        "psr-4": {
-            "Medas\\TestDataCreator\\": "src/",
-            "Medas\\TestDataCreatorTest\\": "tests/"
-        }
+  "name": "morphp/medas-test-data-creator",
+  "description": "Medas test data creator",
+  "version": "v2.0.0",
+  "keywords": [
+    "backend"
+  ],
+  "authors": [
+    {
+      "name": "Patrick Morpey",
+      "email": "patrick@morphp.nl"
     }
+  ],
+  "type": "library",
+  "require": {
+    "morphp/medas-core": "^2",
+    "morphp/medas-entity-manager": "^2",
+    "fakerphp/faker": "^1.24",
+    "symfony/yaml": "^7.3"
+  },
+  "require-dev": {
+    "morphp/medas-service-manager": "^2",
+    "phpunit/phpunit": "^9.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "Medas\\TestDataCreator\\": "src/",
+      "Medas\\TestDataCreatorTest\\": "tests/"
+    }
+  }
 }

@@ -55,7 +55,7 @@ class Processor
             'parent' => $context['parent'] ?? null,
             'password' => $this->faker->password(),
             'passwordHash' => password_hash($parameters[0], PASSWORD_DEFAULT),
-            'question' => rtrim($this->faker->sentence(), '. ') . '?',
+            'question' => rtrim($this->faker->sentence(20), '. ') . '?',
             'random' => $this->faker->randomElement($parameters[0]),
             'switch' => $this->switchProcessor->process($parameters),
             'text' => '<p>' . implode('</p><p>', $this->faker->paragraphs(mt_rand(1, 5))) . '</p>',
