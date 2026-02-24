@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Medas\TestDataCreator;
 
 use Medas\Core\Attributes\Service;
-use Medas\EntityManager\{EntityClasses, Repository};
+use Medas\EntityManager\{EntityClasses, EntityManager, Repository};
 
 #[Service]
 readonly class EntityClearer
 {
     public function __construct(
         private EntityClasses $entityClasses,
+        private EntityManager $entityManager,
         private Repository    $repository,
     )
     {
@@ -45,9 +46,9 @@ readonly class EntityClearer
     private function clearEntity(string $className): void
     {
         foreach ($this->repository->fetchAll($className) as $entity) {
-            em()->delete($entity);
+            $this->entityManager->delete($entity);
         }
 
-        em()->flush();
+        $this->entityManager->flush();
     }
 }

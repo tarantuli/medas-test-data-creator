@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Medas\TestDataCreator;
 
-use Medas\Core\Attributes\{Entrypoint, Service};
+use Faker\Factory;
+use Medas\Core\{Attributes\Entrypoint, Attributes\Service, Exceptions\FailedToReadContent};
+use Medas\EntityManager\EntityManager;
 use Medas\ObjectToArraySerializer\ArrayToObjectCaster;
 use Symfony\Component\Yaml\Yaml;
 
@@ -14,6 +16,7 @@ readonly class YamlProcessor
     public function __construct(
         private ActionProcessor               $actionProcessor,
         private ArrayToObjectCaster           $arrayToObjectCaster,
+        private EntityManager                 $entityManager,
         private YamlProcessor\ImportProcessor $importProcessor,
     )
     {
@@ -21,7 +24,7 @@ readonly class YamlProcessor
 
     public function process(string $directory): void
     {
-        em()->autoPersistOnCreate(alsoFlush: false);
+        $this->entityManager->autoPersistOnCreate(alsoFlush: false);
 
         $job = $this->createJob($directory);
 
@@ -31,7 +34,7 @@ readonly class YamlProcessor
             echo "Flushing…\n";
         }
 
-        em()->flush();
+        $this->entityManager->flush();
 
         if ($job->printProgress) {
             echo "   Flushing: done\n";
@@ -55,13 +58,20 @@ readonly class YamlProcessor
             Definitions\Data::class
         );
 
+        $job->faker = Factory::create($job->data->locale);
+
         return $job;
     }
 
     private function getContent(Job $job): string
     {
         $file = $job->directory . DIRECTORY_SEPARATOR . 'index.yaml';
+        $content = file_get_contents($file);
 
-        return $this->importProcessor->process($job, file_get_contents($file));
+        if ($content === false) {
+            throw new FailedToReadContent($file);
+        }
+
+        return $this->importProcessor->process($job, $content);
     }
 }

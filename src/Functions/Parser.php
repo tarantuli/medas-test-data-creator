@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Medas\TestDataCreator\Functions;
 
 use Medas\Core\Attributes\Service;
+use Medas\TestDataCreator\Exceptions\{EmptyFunctionNameEncountered, UnexpectedEndOfFunctionString};
 
 #[Service]
 readonly class Parser
@@ -21,7 +22,7 @@ readonly class Parser
         $parenthesesDepth = 0;
         $curlyBracesDepth = 0;
         $squareBracketsDepth = 0;
-        $fase = self::READING_FUNCTION_NAME;
+        $phase = self::READING_FUNCTION_NAME;
         $function = null;
 
         for ($p = 0; $p < $length; $p++) {
@@ -40,11 +41,11 @@ readonly class Parser
                 continue;
             }
 
-            if ($fase === self::DONE_READING_FUNCTION) {
+            if ($phase === self::DONE_READING_FUNCTION) {
                 return null;
             }
 
-            if ($fase === self::READING_FUNCTION_PARAMETERS) {
+            if ($phase === self::READING_FUNCTION_PARAMETERS) {
                 if ($char === '(') {
                     $parenthesesDepth++;
 
@@ -57,7 +58,7 @@ readonly class Parser
                     if ($parenthesesDepth === 0 && $curlyBracesDepth === 0 && $squareBracketsDepth === 0) {
                         $function->parameters[] = trim($buffer);
                         $buffer = '';
-                        $fase = self::DONE_READING_FUNCTION;
+                        $phase = self::DONE_READING_FUNCTION;
                     }
                     else {
                         $parenthesesDepth--;
@@ -108,19 +109,27 @@ readonly class Parser
                 }
             }
 
-            if ($fase === self::READING_FUNCTION_NAME && $char === '(') {
+            if ($phase === self::READING_FUNCTION_NAME && $char === '(') {
+                if ($buffer === '') {
+                    throw new EmptyFunctionNameEncountered($value);
+                }
+
                 $function = new Call($buffer);
                 $buffer = '';
-                $fase = self::READING_FUNCTION_PARAMETERS;
+                $phase = self::READING_FUNCTION_PARAMETERS;
 
                 continue;
             }
 
-            if ($fase === self::READING_FUNCTION_NAME && !preg_match('/[a-zA-Z]/', $char)) {
+            if ($phase === self::READING_FUNCTION_NAME && !preg_match('/[a-zA-Z]/', $char)) {
                 return null;
             }
 
             $buffer .= $char;
+        }
+
+        if ($phase == self::READING_FUNCTION_PARAMETERS) {
+            throw new UnexpectedEndOfFunctionString($value);
         }
 
         return $function;

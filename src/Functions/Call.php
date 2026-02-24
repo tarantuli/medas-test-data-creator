@@ -8,6 +8,8 @@ class Call
 {
     public function __construct(
         public string $name,
+
+        /** @var string[] */
         public array  $parameters = [],
     )
     {

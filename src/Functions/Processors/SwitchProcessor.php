@@ -15,7 +15,7 @@ readonly class SwitchProcessor
         $cumulative = 0;
 
         foreach ($parameters as $parameter) {
-            [$chance, $result] = explode(':', $parameter);
+            [$chance, $result] = explode(':', $parameter, 2);
 
             if ($rand <= ($cumulative += (int) $chance)) {
                 return $result;

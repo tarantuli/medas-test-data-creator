@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Medas\TestDataCreator\Functions;
 
-use Faker\Factory;
-use Faker\Generator;
 use Medas\Core\Attributes\Service;
 use Medas\TestDataCreator\{Exceptions, Job, ValueProcessor};
 
@@ -13,7 +11,6 @@ use Medas\TestDataCreator\{Exceptions, Job, ValueProcessor};
 class Processor
 {
     private int $uniqueInt = 0;
-    private Generator $faker;
 
     public function __construct(
         private readonly Processors\Between         $betweenProcessor,
@@ -25,7 +22,6 @@ class Processor
         private readonly Processors\SwitchProcessor $switchProcessor,
     )
     {
-        $this->faker = Factory::create('nl_NL');
     }
 
     public function applyFunction(
@@ -46,22 +42,25 @@ class Processor
             'chance' => $this->chanceProcessor->process($parameters),
             'create' => $this->createProcessor->process($job, $parameters),
             'createArray' => $this->createProcessor->processArray($job, $parameters),
-            'email' => $this->faker->email(),
+            'email' => $job->faker->email(),
             'filter' => $this->filterProcessor->process($parameters),
             'futureDate' => $this->futureDateProcessor->process(),
             'if' => $this->ifProcessor->process($parameters),
-            'name' => $this->faker->name(),
-            'not' => !$valueProcessor->process($job, $parameters[0], $context),
+            'name' => $job->faker->name(),
+            'not' => !$parameters[0],
             'parent' => $context['parent'] ?? null,
-            'password' => $this->faker->password(),
+            'password' => $job->faker->password(),
             'passwordHash' => password_hash($parameters[0], PASSWORD_DEFAULT),
-            'question' => rtrim($this->faker->sentence(20), '. ') . '?',
-            'random' => $this->faker->randomElement($parameters[0]),
+            'question' => rtrim($job->faker->sentence(20), '. ') . '?',
+            'random' => $job->faker->randomElement($parameters[0]),
             'switch' => $this->switchProcessor->process($parameters),
-            'text' => '<p>' . implode('</p><p>', $this->faker->paragraphs(mt_rand(1, 5))) . '</p>',
-            'title' => rtrim($this->faker->sentence(), '. '),
+            'text' => '<p>'
+                . implode('</p><p>', $job->faker->paragraphs($job->faker->numberBetween(1, 5)))
+                . '</p>',
+
+            'title' => rtrim($job->faker->sentence(), '. '),
             'uniqueInt' => $this->uniqueInt++,
-            'word' => rtrim($this->faker->word(), '. '),
+            'word' => rtrim($job->faker->word(), '. '),
             default => throw new Exceptions\UnknownFunctionName($function),
         };
     }

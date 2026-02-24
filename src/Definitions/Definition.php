@@ -6,7 +6,7 @@ namespace Medas\TestDataCreator\Definitions;
 
 class Definition
 {
-    public string $entity;
+    public string|null $entity = null;
 
     /** @var mixed[] */
     public array $properties = [];

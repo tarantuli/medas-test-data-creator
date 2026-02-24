@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Medas\TestDataCreator;
 
 use Medas\Core\Attributes\Service;
+use Medas\EntityManager\EntityManager;
 
 #[Service]
 readonly class EntityCreator
 {
     public function __construct(
+        private EntityManager  $entityManager,
         private ValueProcessor $valueProcessor,
     )
     {
@@ -17,7 +19,19 @@ readonly class EntityCreator
 
     public function create(Job $job, Definitions\Action $action, array $context = []): void
     {
+        if ($action->definition === null) {
+            throw new Exceptions\NoDefinitionSpecifiedForCreateAction($action);
+        }
+
+        if ($action->count === null) {
+            throw new Exceptions\NoCountSpecifiedForCreateAction($action);
+        }
+
         $definition = clone $job->data->definitions[$action->definition];
+
+        if ($definition->entity === null) {
+            throw new Exceptions\NoEntitySpecifiedInDefinition($definition);
+        }
 
         if ($action->properties) {
             $definition->properties = array_merge($definition->properties, $action->properties);
@@ -50,7 +64,7 @@ readonly class EntityCreator
             );
         }
 
-        $entity = em()->create($definition->entity, $properties);
+        $entity = $this->entityManager->create($definition->entity, $properties);
 
         if ($definition->children) {
             foreach ($definition->children as $child) {
