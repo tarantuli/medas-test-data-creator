@@ -36,7 +36,7 @@ readonly class ImportProcessor
                 $newContent = file_get_contents($filePath);
 
                 if ($newContent === false) {
-                    throw new FailedToReadContent($filePath);
+                    throw new FailedToReadContent($filePath, 'file_get_contents() failed');
                 }
 
                 $newContent = preg_replace('/^/m', $match[1], $newContent);

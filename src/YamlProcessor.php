@@ -69,7 +69,7 @@ readonly class YamlProcessor
         $content = file_get_contents($file);
 
         if ($content === false) {
-            throw new FailedToReadContent($file);
+            throw new FailedToReadContent($file, 'file_get_contents() failed');
         }
 
         return $this->importProcessor->process($job, $content);
